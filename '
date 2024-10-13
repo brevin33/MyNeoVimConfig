@@ -58,62 +58,62 @@ vim.keymap.set("x", "x", "\"_x")
 local lsp_zero = require('lsp-zero')
 
 local lsp_attach = function(client, bufnr)
-	local _ = client
-	local opts = { buffer = bufnr }
+    local _ = client
+    local opts = { buffer = bufnr }
 
-	vim.keymap.set('n', 'L', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-	vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-	vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-	vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-	vim.keymap.set('n', 'gh', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-	vim.keymap.set('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-	vim.keymap.set('n', '<leader>c', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
-	lsp_zero.buffer_autoformat()
+    vim.keymap.set('n', 'L', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+    vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+    vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+    vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+    vim.keymap.set('n', 'gh', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+    vim.keymap.set('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+    vim.keymap.set('n', '<leader>c', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+    lsp_zero.buffer_autoformat()
 end
 
 lsp_zero.extend_lspconfig({
-	sign_text = {
-		error = '✘',
-		warn = '▲',
-		hint = '⚑',
-		info = '»',
-	},
-	lsp_attach = lsp_attach,
-	capabilities = require('cmp_nvim_lsp').default_capabilities(),
+    sign_text = {
+        error = '✘',
+        warn = '▲',
+        hint = '⚑',
+        info = '»',
+    },
+    lsp_attach = lsp_attach,
+    capabilities = require('cmp_nvim_lsp').default_capabilities(),
 })
 
 require("dapui").setup()
 local dap, dapui = require("dap"), require("dapui")
 dap.listeners.before.attach.dapui_config = function()
-	dapui.open()
+    dapui.open()
 end
 dap.listeners.before.launch.dapui_config = function()
-	dapui.open()
+    dapui.open()
 end
 dap.listeners.before.event_terminated.dapui_config = function()
-	dapui.close()
+    dapui.close()
 end
 dap.listeners.before.event_exited.dapui_config = function()
-	dapui.close()
+    dapui.close()
 end
 require('mason').setup({
-	ensure_installed = { 'clang-format', 'cpptools', 'lua_ls', 'clangd' }
+    ensure_installed = { 'clang-format', 'cpptools', 'lua_ls', 'clangd' }
 })
 require("mason-nvim-dap").setup({
-	ensure_installed = { "codelldb" },
-	automatic_installation = true,
-	handlers = {},
+    ensure_installed = { "codelldb" },
+    automatic_installation = true,
+    handlers = {},
 })
 
 require('mason-lspconfig').setup({
-	-- Replace the language servers listed here
-	-- with the ones you want to install
-	ensure_installed = {},
-	handlers = {
-		function(server_name)
-			require('lspconfig')[server_name].setup({})
-		end,
-	}
+    -- Replace the language servers listed here
+    -- with the ones you want to install
+    ensure_installed = {},
+    handlers = {
+        function(server_name)
+            require('lspconfig')[server_name].setup({})
+        end,
+    }
 })
 
 local cmp = require('cmp')
@@ -123,25 +123,25 @@ require('luasnip.loaders.from_vscode').lazy_load()
 
 
 cmp.setup({
-	sources = {
-		{ name = 'nvim_lsp' },
-		{ name = 'luasnip' },
-	},
-	mapping = cmp.mapping.preset.insert({
-		['<CR>'] = cmp.mapping.confirm({ select = false }),
-		['<Tab>'] = cmp_action.luasnip_supertab(),
-		['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
-	}),
-	snippet = {
-		expand = function(args)
-			require('luasnip').lsp_expand(args.body)
-		end,
-	},
-	formatting = cmp_format,
-	window = {
-		completion = cmp.config.window.bordered(),
-		documentation = cmp.config.window.bordered(),
-	},
+    sources = {
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' },
+    },
+    mapping = cmp.mapping.preset.insert({
+        ['<CR>'] = cmp.mapping.confirm({ select = false }),
+        ['<Tab>'] = cmp_action.luasnip_supertab(),
+        ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
+    }),
+    snippet = {
+        expand = function(args)
+            require('luasnip').lsp_expand(args.body)
+        end,
+    },
+    formatting = cmp_format,
+    window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+    },
 })
 vim.keymap.set("n", "ge", vim.diagnostic.goto_next)
 vim.keymap.set("n", "gE", vim.diagnostic.goto_prev)
@@ -149,28 +149,28 @@ vim.keymap.set("n", "gE", vim.diagnostic.goto_prev)
 
 local status_ok, npairs = pcall(require, "nvim-autopairs")
 if not status_ok then
-	return
+    return
 end
 
 npairs.setup {
-	check_ts = true,
-	ts_config = {
-		lua = { "string", "source" },
-		javascript = { "string", "template_string" },
-		java = false,
-	},
-	disable_filetype = { "TelescopePrompt", "spectre_panel" },
-	fast_wrap = {
-		map = "<M-e>",
-		chars = { "{", "[", "(", '"', "'" },
-		pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], "%s+", ""),
-		offset = 0,
-		end_key = "$",
-		keys = "qwertyuiopzxcvbnmasdfghjkl",
-		check_comma = true,
-		highlight = "PmenuSel",
-		highlight_grey = "LineNr",
-	},
+    check_ts = true,
+    ts_config = {
+        lua = { "string", "source" },
+        javascript = { "string", "template_string" },
+        java = false,
+    },
+    disable_filetype = { "TelescopePrompt", "spectre_panel" },
+    fast_wrap = {
+        map = "<M-e>",
+        chars = { "{", "[", "(", '"', "'" },
+        pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], "%s+", ""),
+        offset = 0,
+        end_key = "$",
+        keys = "qwertyuiopzxcvbnmasdfghjkl",
+        check_comma = true,
+        highlight = "PmenuSel",
+        highlight_grey = "LineNr",
+    },
 }
 
 local hmark = require("harpoon.mark")
@@ -191,14 +191,14 @@ vim.keymap.set("n", "<leader>9", function() hui.nav_file(9) end)
 
 local osys = require("cmake-tools.osys")
 require("cmake-tools").setup {
-	cmake_dap_configuration = { -- debug settings for cmake
-		name = "cpp",
-		type = "codelldb",
-		request = "launch",
-		stopOnEntry = false,
-		runInTerminal = true,
-		console = "integratedTerminal",
-	},
+    cmake_dap_configuration = { -- debug settings for cmake
+        name = "cpp",
+        type = "codelldb",
+        request = "launch",
+        stopOnEntry = false,
+        runInTerminal = true,
+        console = "integratedTerminal",
+    },
 }
 
 local lspdir = vim.fn.getcwd() .. "/out/lsp"
@@ -207,41 +207,42 @@ cwd = string.gsub(cwd, '\\', '/')
 lspdir = string.gsub(lspdir, '\\', '/')
 
 function CopyFile(src, destDir)
-	-- Add a 3-second delay before starting the file copy
-	vim.defer_fn(function()
-		local infile = io.open(src, "rb") -- Open source file in read mode (binary)
+    -- Add a 3-second delay before starting the file copy
+    vim.defer_fn(function()
+        local infile = io.open(src, "rb") -- Open source file in read mode (binary)
 
-		if infile then
-			-- Extract the filename from the source path
-			local filename = vim.fn.fnamemodify(src, ":t") -- Get the filename from the src path
-			local dest = destDir .. "/" .. filename -- Construct the full destination path
+        if infile then
+            -- Extract the filename from the source path
+            local filename = vim.fn.fnamemodify(src, ":t") -- Get the filename from the src path
+            local dest = destDir .. "/" .. filename        -- Construct the full destination path
 
-			-- Open destination file in write mode (binary)
-			local outfile = io.open(dest, "wb")
+            -- Open destination file in write mode (binary)
+            local outfile = io.open(dest, "wb")
 
-			if outfile then
-				local content = infile:read("*all") -- Read the entire source file
-				outfile:write(content)  -- Write the content to the destination file
-				infile:close()          -- Close the source file
-				outfile:close()         -- Close the destination file
-				print("File copied from " .. src .. " to " .. dest)
-			else
-				print("Error opening destination file. Check the path!")
-			end
-		else
-			print("Error opening source file. Check the path!")
-		end
-	end, 3000) -- 3000 milliseconds (3 seconds)
+            if outfile then
+                local content = infile:read("*all") -- Read the entire source file
+                outfile:write(content)              -- Write the content to the destination file
+                infile:close()                      -- Close the source file
+                outfile:close()                     -- Close the destination file
+                print("File copied from " .. src .. " to " .. dest)
+            else
+                print("Error opening destination file. Check the path!")
+            end
+        else
+            print("Error opening source file. Check the path!")
+        end
+    end, 3000) -- 3000 milliseconds (3 seconds)
 end
 
 vim.keymap.set("n", "<leader>cl",
-	'<CMD>CMakeGenerate -G Ninja -B ' ..
-	lspdir ..
-	' -DCMAKE_EXPORT_COMPILE_COMMANDS=ON<CR>' ..
-	'<CMD>lua CopyFile("' .. lspdir .. '/compile_commands.json", "' .. cwd .. '")<CR>',
-	{ noremap = true, silent = true }
+    '<CMD>CMakeGenerate -G Ninja -B ' ..
+    lspdir ..
+    ' -DCMAKE_EXPORT_COMPILE_COMMANDS=ON<CR>' ..
+    '<CMD>lua CopyFile("' .. lspdir .. '/compile_commands.json", "' .. cwd .. '")<CR>',
+    { noremap = true, silent = true }
 )
 
+print('<CMD>lua CopyFile("' .. lspdir .. '/compile_commands.json", "' .. cwd .. '")<CR>')
 vim.keymap.set("n", "<leader>cb", vim.cmd.CMakeBuild)
 vim.keymap.set("n", "<leader>cr", vim.cmd.CMakeDebug)
 vim.keymap.set("n", "<leader>cg", vim.cmd.CMakeGenerate)
@@ -250,5 +251,5 @@ vim.keymap.set("n", "<leader>ce", vim.cmd.CMakeQuickStart)
 vim.keymap.set("n", "<leader>cs", vim.cmd.CMakeSettings)
 vim.keymap.set("n", "<leader>ci", vim.cmd.CMakeInstall)
 vim.keymap.set("n", "<leader>ca", vim.cmd.CMakeLaunchArgs)
-vim.keymap.set("n", "<leader>cp", vim.cmd.CMakeSelectLaunchTarget)
-vim.keymap.set("n", "<leader>ct", vim.cmd.CMakeSelectBuildTarget)
+vim.keymap.set("n", "<leader>cp", vim.cmd.CMakeSelectBuildTarget)
+vim.keymap.set("n", "<leader>ct", vim.cmd.CMakeRunTest)
