@@ -26,7 +26,7 @@ vim.keymap.set('n', '<leader>q', '<CMD>wa<CR><CMD>qa<CR>')
 vim.keymap.set('n', '<leader>s', '<CMD>wa<CR>')
 
 vim.keymap.set("n", "<leader>t", '<CMD>ToggleTerm<CR>i')
-vim.keymap.set("t", "<Esc>", '<C-\\><C-n><C-w><CMD>ToggleTerm<CR>')
+vim.keymap.set("t", "<Esc>", '<C-\\><C-n><CMD>ToggleTerm<CR>')
 vim.keymap.set("n", " ", "<Nop>");
 vim.keymap.set("t", "<S-Tab>", "<C-\\><C-n>")
 vim.keymap.set("n", "<leader>!", "<CMD>SessionSave<CR>")
