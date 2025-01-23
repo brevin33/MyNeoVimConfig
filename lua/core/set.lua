@@ -39,7 +39,6 @@ vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,
 vim.o.autoindent = true
 vim.o.expandtab = false
 
-
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",
 	group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
@@ -57,13 +56,6 @@ vim.api.nvim_create_autocmd('CursorMoved', {
 	end
 })
 
-vim.api.nvim_create_autocmd({ "BufLeave", "InsertLeave" }, {
-	group = vim.api.nvim_create_augroup('auto-save', { clear = true }),
-	callback = function()
-		pcall(vim.cmd, "wa")
-	end
-})
-
 require("toggleterm").setup {
 	size = 20,
 	hide_numbers = true, -- hide the number column in toggleterm buffers
@@ -71,17 +63,8 @@ require("toggleterm").setup {
 	close_on_exit = true, -- close the terminal window when the process exits
 	clear_env = false, -- use only environmental variables from `env`, passed to jobstart()
 	auto_scroll = true, -- automatically scroll to the bottom on terminal output
-	start_in_insert = false,
-	direction = "float",
+	start_in_insert = true,
 	shell = "PowerShell",
-	-- This field is only relevant if direction is set to 'float'
-	float_opts = {
-		border = 'single',
-		width = 140,
-		height = 40,
-		zindex = 99,
-		title_pos = 'center',
-	},
 }
 
 require("oil").setup({
@@ -131,8 +114,7 @@ require("oil").setup({
 		-- Set to true to autosave buffers that are updated with LSP willRenameFiles
 		-- Set to "unmodified" to only save unmodified buffers
 		autosave_changes = false,
-	},
-	-- Constrain the cursor to the editable parts of the oil buffer
+	}, -- Constrain the cursor to the editable parts of the oil buffer
 	-- Set to `false` to disable, or "name" to keep it on the file names
 	constrain_cursor = "editable",
 	-- Set to true to watch the filesystem for changes and reload oil
@@ -177,8 +159,7 @@ require("oil").setup({
 		-- Sort file names in a more intuitive order for humans. Is less performant,
 		-- so you may want to set to false if you work with large directories.
 		natural_order = true,
-		-- Sort file and directory names case insensitive
-		case_insensitive = false,
+		-- Sort file and directory names case insensitive case_insensitive = false,
 		sort = {
 			-- sort order can be "asc" or "desc"
 			-- see :help oil-columns to see which columns are sortable
@@ -267,3 +248,29 @@ require("oil").setup({
 		border = "rounded",
 	},
 })
+
+local status_ok, npairs = pcall(require, "nvim-autopairs")
+if not status_ok then
+	return
+end
+
+npairs.setup {
+	check_ts = true,
+	ts_config = {
+		lua = { "string", "source" },
+		javascript = { "string", "template_string" },
+		java = false,
+	},
+	disable_filetype = { "TelescopePrompt", "spectre_panel" },
+	fast_wrap = {
+		map = "<M-e>",
+		chars = { "{", "[", "(", '"', "'" },
+		pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], "%s+", ""),
+		offset = 0,
+		end_key = "$",
+		keys = "qwertyuiopzxcvbnmasdfghjkl",
+		check_comma = true,
+		highlight = "PmenuSel",
+		highlight_grey = "LineNr",
+	},
+}
