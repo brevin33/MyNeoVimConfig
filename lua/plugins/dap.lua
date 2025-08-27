@@ -1,39 +1,175 @@
 return {
 	"mfussenegger/nvim-dap",
 	dependencies = {
-		"theHamsta/nvim-dap-virtual-text", { "igorlfs/nvim-dap-view", opts = {} },
+	"theHamsta/nvim-dap-virtual-text",
+	{ "igorlfs/nvim-dap-view" },
+	"williamboman/mason.nvim",
+	"mfussenegger/nvim-dap",
+	"jay-babu/mason-nvim-dap.nvim",
 	},
 	config = function()
 		local dap = require("dap")
-		require("nvim-dap-virtual-text").setup {}
-		vim.keymap.set('n', 'A', function() require('dap').step_over() end)
-		vim.keymap.set('n', 'S', function() require('dap').step_into() end)
-		vim.keymap.set('n', 'D', function() require('dap').step_out() end)
-		vim.keymap.set('n', 'F', function() require('dap').continue() end)
-		vim.keymap.set('n', '<leader>e', function()
-			require('dap').disconnect()
-			require('dap').close()
-			require("dap-view").close()
-		end)
-		vim.keymap.set("n", "<leader>w", function()
-			require("dap-view").add_expr()
-		end)
-		vim.keymap.set("n", "G", function()
-			local widgets = require("dap.ui.widgets")
-			widgets.centered_float(widgets.scopes, { border = "rounded" })
-		end)
-		vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() end)
-		dap.listeners.before.attach.dapui_config = function()
-			require("dap-view").open()
-		end
-		dap.listeners.before.launch.dapui_config = function()
-			require("dap-view").open()
-		end
-		dap.listeners.before.event_terminated.dapui_config = function()
-			require("dap-view").close()
-		end
-		dap.listeners.before.event_exited.dapui_config = function()
-			require("dap-view").close()
-		end
-	end
+	end,
+		-- 	local dapView = require("dap-view")
+	-- 	dapView.setup({
+	-- 		winbar = {
+	-- 			show = true,
+	-- 			-- You can add a "console" section to merge the terminal with the other views
+	-- 			sections = { "scopes", "threads", "watches", "exceptions", "breakpoints" },
+	-- 			-- Must be one of the sections declared above
+	-- 			default_section = "scopes",
+	-- 			controls = {
+	-- 				enabled = false,
+	-- 				position = "right",
+	-- 				buttons = {
+	-- 					"play",
+	-- 					"step_into",
+	-- 					"step_over",
+	-- 					"step_out",
+	-- 					"step_back",
+	-- 					"run_last",
+	-- 					"terminate",
+	-- 					"disconnect",
+	-- 				},
+	-- 				custom_buttons = {},
+	-- 			},
+	-- 		},
+	-- 		windows = {
+	-- 			height = 14,
+	-- 			position = "below",
+	-- 			terminal = {
+	-- 				position = "left",
+	-- 				width = 0.5,
+	-- 				-- List of debug adapters for which the terminal should be ALWAYS hidden
+	-- 				hide = {},
+	-- 				-- Hide the terminal when starting a new session
+	-- 				start_hidden = false,
+	-- 			},
+	-- 		},
+	-- 		help = {
+	-- 			border = nil,
+	-- 		},
+	-- 		-- Controls how to jump when selecting a breakpoint or navigating the stack
+	-- 		switchbuf = "uselast",
+	-- 	})
+	--
+	-- 	vim.keymap.set("n", "<A-BS>", function()
+	-- 		if _G.enable_cmake_debug then
+	-- 			vim.cmd.CMakeDebug()
+	-- 		else
+	-- 			dapView.jump_to_view("breakpoints")
+	-- 		end
+	-- 	end, { noremap = true, silent = true })
+	--
+	-- 	vim.keymap.set("n", "<A-u>", function()
+	-- 		if _G.enable_cmake_debug then
+	-- 			vim.cmd.CMakeDebug()
+	-- 		else
+	-- 			dapView.jump_to_view("scopes")
+	-- 		end
+	-- 	end, { noremap = true, silent = true })
+	--
+	-- 	vim.keymap.set("n", "<A-p>", function()
+	-- 		if _G.enable_cmake_debug then
+	-- 			vim.cmd.CMakeDebug()
+	-- 		else
+	-- 			dapView.jump_to_view("exceptions")
+	-- 		end
+	-- 	end, { noremap = true, silent = true })
+	--
+	-- 	vim.keymap.set("n", "<A-i>", function()
+	-- 		if _G.enable_cmake_debug then
+	-- 			vim.cmd.CMakeDebug()
+	-- 		else
+	-- 			dapView.jump_to_view("threads")
+	-- 		end
+	-- 	end, { noremap = true, silent = true })
+	--
+	-- 	vim.keymap.set("n", "<A-o>", function()
+	-- 		if _G.enable_cmake_debug then
+	-- 			vim.cmd.CMakeDebug()
+	-- 		else
+	-- 			dapView.jump_to_view("watches")
+	-- 		end
+	-- 	end, { noremap = true, silent = true })
+	-- 	require("nvim-dap-virtual-text").setup({
+	-- 		enabled = true,
+	-- 		enabled_commands = true,
+	-- 		highlight_changed_variables = true,
+	-- 		highlight_new_as_changed = true,
+	-- 		show_stop_reason = true,
+	-- 		commented = false,
+	-- 		only_first_definition = true,
+	-- 		all_references = false,
+	-- 		clear_on_continue = true, -- this is the key part
+	-- 	})
+	-- 	vim.keymap.set("n", "<A-j>", function()
+	-- 		if _G.enable_cmake_debug then
+	-- 			vim.cmd.CMakeDebug()
+	-- 		else
+	-- 			require("dap").step_over()
+	-- 		end
+	-- 	end)
+	-- 	vim.keymap.set("n", "<A-k>", function()
+	-- 		if _G.enable_cmake_debug then
+	-- 			vim.cmd.CMakeDebug()
+	-- 		else
+	-- 			require("dap").step_into()
+	-- 		end
+	-- 	end)
+	-- 	vim.keymap.set("n", "<A-l>", function()
+	-- 		if _G.enable_cmake_debug then
+	-- 			vim.cmd.CMakeDebug()
+	-- 		else
+	-- 			require("dap").step_out()
+	-- 		end
+	-- 	end)
+	-- 	vim.keymap.set("n", "<A-;>", function()
+	-- 		if _G.enable_cmake_debug then
+	-- 			vim.cmd.CMakeDebug()
+	-- 		else
+	-- 			require("dap").continue()
+	-- 		end
+	-- 	end)
+	-- 	vim.keymap.set("n", "<A-CR>", function()
+	-- 		if _G.enable_cmake_debug then
+	-- 			vim.cmd.CMakeDebug()
+	-- 		else
+	-- 			require("dap").terminate()
+	-- 		end
+	-- 	end)
+	-- 	vim.keymap.set("n", "<A-h>", function()
+	-- 		require("dap").toggle_breakpoint()
+	-- 	end)
+	-- 	dap.listeners.before.attach.dapui_config = function()
+	-- 		_G.enable_cmake_debug = false
+	-- 		require("dap-view").open()
+	-- 		vim.o.scrolloff = 999999
+	-- 	end
+	-- 	dap.listeners.before.launch.dapui_config = function()
+	-- 		_G.enable_cmake_debug = false
+	-- 		require("dap-view").open()
+	-- 		vim.o.scrolloff = 999999
+	-- 	end
+	-- 	local function cleanup_after_debug()
+	-- 		_G.enable_cmake_debug = true
+	-- 		for _, win in ipairs(vim.api.nvim_list_wins()) do
+	-- 			local buf = vim.api.nvim_win_get_buf(win)
+	-- 			if vim.bo[buf].buftype == "terminal" then
+	-- 				vim.api.nvim_win_close(win, true)
+	-- 			end
+	-- 		end
+	-- 		vim.defer_fn(function()
+	-- 			pcall(function()
+	-- 				require("dap-view").close()
+	-- 			end)
+	-- 		end, 50)
+	-- 		vim.o.scrolloff = 999999
+	-- 	end
+	-- 	dap.listeners.after.event_terminated.dapui_config = cleanup_after_debug
+	-- 	dap.listeners.after.event_exited.dapui_config = cleanup_after_debug
+	-- 	dap.listeners.after.disconnect.dapui_config = cleanup_after_debug
+	--
+	-- 	require("dap").set_log_level("TRACE")
+	-- end,
 }

@@ -1,2 +1,0 @@
-
-return {'neovim/nvim-lspconfig'}
