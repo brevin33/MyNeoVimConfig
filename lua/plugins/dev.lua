@@ -1,9 +1,5 @@
 return {
-	"brevin33/raddebugger.nvim",
-	dependencies = {
-		"nvim-lua/plenary.nvim",
-		--'nvim-telescope/telescope.nvim', -- if you want to use telescope for adding targets
-	},
+	dir = vim.fn.stdpath("config") .. "/lua/rad_debugger.nvim",
 	config = function()
 		local raddbg = require("rad_debugger")
 		raddbg.setup({
@@ -45,10 +41,18 @@ return {
 		end, { noremap = true, silent = true })
 
 		vim.keymap.set("n", "<A-j>", function()
-			raddbg.step_over()
+			raddbg.step_over_line()
 		end, { noremap = true, silent = true })
 
 		vim.keymap.set("n", "<A-k>", function()
+			raddbg.step_into_line()
+		end, { noremap = true, silent = true })
+
+		vim.keymap.set("n", "<A-m>", function()
+			raddbg.step_over()
+		end, { noremap = true, silent = true })
+
+		vim.keymap.set("n", "<A-,>", function()
 			raddbg.step_into()
 		end, { noremap = true, silent = true })
 

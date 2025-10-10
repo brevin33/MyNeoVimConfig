@@ -32,7 +32,7 @@ return {
 		purge_after_minutes = nil,           -- Sessions older than purge_after_minutes will be deleted asynchronously on startup, e.g. set to 14400 to delete sessions that haven't been accessed for more than 10 days, defaults to off (no purging), requires >= nvim 0.10
 		log_level = "error",                 -- Sets the log level of the plugin (debug, info, warn, error).
 		session_lens = {
-			load_on_setup = false,
+			load_on_setup = true,
 		},
 		post_restore_cmds = {
 			function()

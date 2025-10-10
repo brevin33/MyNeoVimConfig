@@ -100,6 +100,43 @@ vim.api.nvim_create_autocmd("CursorMoved", {
 })
 
 require("telescope").load_extension("session-lens")
+require("telescope").setup({
+	defaults = {},
+	pickers = {
+		find_files = {
+			hidden = true,
+			theme = "dropdown",
+			previewer = false,
+		},
+		live_grep = {
+			theme = "dropdown",
+			layout_config = {
+				height = 0.5,
+				width = 0.99,
+				anchor = "S",
+			},
+		},
+		buffers = {
+			theme = "dropdown",
+			layout_config = {
+				height = 0.5,
+				width = 0.99,
+				anchor = "S",
+			},
+		},
+		lsp_references = {
+			theme = "dropdown",
+			layout_config = {
+				height = 0.5,
+				width = 0.99,
+				anchor = "S",
+			},
+		},
+		["auto-session"] = {
+			theme = "dropdown",
+		},
+	},
+})
 
 vim.api.nvim_create_autocmd("VimEnter", {
 	callback = function()
@@ -170,3 +207,8 @@ vim.filetype.add({
 		span = "span",
 	},
 })
+--
+-- vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+-- 	pattern = "*.tia",
+-- 	command = "set filetype=c",
+-- })

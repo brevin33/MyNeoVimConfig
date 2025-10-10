@@ -35,6 +35,8 @@ vim.api.nvim_create_autocmd("FileType", {
 -- open tree sitter tree
 vim.keymap.set("n", "<leader>i", "<cmd>InspectTree<cr>", { desc = "Open tree sitter tree" })
 
+vim.keymap.set("n", "<A-n>", "<cmd>cnext<cr>", { desc = "cnext" })
+
 -- single line copilot accept
 --vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.copilot_accept_single_line()", { expr = true, silent = true })
 --vim.keymap.set("i", "<S-Tab>", "copilot#AcceptLine()", { expr = true, silent = true })
@@ -172,8 +174,11 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>")
 -- telescope
 local builtin = require("telescope.builtin")
 vim.keymap.set("n", "gf", builtin.find_files, { desc = "Telescope find files" })
+vim.keymap.set("n", "gc", builtin.git_commits, { desc = "Telescope find commits" })
+vim.keymap.set("n", "gb", builtin.git_branches, { desc = "Telescope find branches" })
 vim.keymap.set("n", "gt", builtin.live_grep, { desc = "Telescope live grep" })
-vim.keymap.set("n", "gb", builtin.buffers, { desc = "Telescope buffers" })
+
+vim.keymap.set("n", "go", builtin.buffers, { desc = "Telescope buffers" })
 
 -- cmake
 vim.keymap.set("n", "<leader>cb", function()
