@@ -1,3 +1,0 @@
-return {
-	"afair/vibrantink2",
-}
