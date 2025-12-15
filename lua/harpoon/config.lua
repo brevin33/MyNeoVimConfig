@@ -62,7 +62,7 @@ function M.get_default_config()
             sync_on_ui_close = false,
 
             key = function()
-                return vim.fn.getcwd()
+                return vim.loop.cwd()
             end,
         },
 
@@ -182,7 +182,7 @@ function M.get_default_config()
             end,
 
             get_root_dir = function()
-                return vim.fn.getcwd()
+                return vim.loop.cwd()
             end,
 
             ---@param config HarpoonPartialConfigItem

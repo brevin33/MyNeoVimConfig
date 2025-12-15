@@ -79,8 +79,8 @@ vim.o.signcolumn = "no"
 vim.o.hls = true
 vim.o.laststatus = 0
 vim.opt.fillchars = { eob = " " }
---vim.opt.shell = "pwsh"
---vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command /c"
+vim.opt.shell = "pwsh"
+vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command /c"
 vim.opt.shellquote = ""
 vim.opt.shellxquote = ""
 vim.opt.runtimepath:append(vim.fn.stdpath("config") .. "/syntax")
@@ -165,7 +165,6 @@ vim.api.nvim_create_autocmd("FileType", {
                 require("mini.sessions").write(current_session)
             end
             vim.fn.chdir(oil_dir)
-            print("fn cwd:" .. vim.fn.getcwd() .. " | oil cwd: " .. oil_dir .. " | loop cwd: " .. vim.loop.cwd())
             set_current_session()
             if current_session ~= nil then
                 require("mini.sessions").read(current_session)
@@ -200,6 +199,7 @@ require("mini.sessions").setup({
             read = function()
                 set_current_session()
                 require("builder").load_state()
+                require("harpoon").data:sync()
             end
         },
         pre = {
@@ -311,7 +311,6 @@ vim.keymap.set("n", "gd", function()
     end)
 end, { desc = "LSP: Go to Definition" })
 
-
 require("blink.cmp").setup(
     {
         keymap = {
@@ -354,6 +353,11 @@ require("blink.cmp").setup(
         },
         sources = {
             default = { "lsp", "path", "buffer" },
+            transform_items = function(_, items)
+                return vim.tbl_filter(function(item)
+                    return item.kind ~= require('blink.cmp.types').CompletionItemKind.Snippet
+                end, items)
+            end
         },
         fuzzy = {
             implementation = "lua",
@@ -406,7 +410,6 @@ vim.keymap.set("n", "<leader>aa", "<CMD>CopilotChatAgents<CR>", { desc = "Toggle
 
 
 local harpoon = require("harpoon")
-
 -- Initialize harpoon
 harpoon:setup()
 
@@ -429,7 +432,6 @@ vim.keymap.set({ "n", "v", "x" }, "<leader>bb", function() require("builder").ru
 vim.keymap.set({ "n", "v", "x" }, "<leader>ba", function()
     vim.ui.input({ prompt = "Enter your input: " }, function(input)
         if input then
-            print("You entered: " .. input)
             require("builder").add_config(input)
         end
     end)
