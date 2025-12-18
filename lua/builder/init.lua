@@ -2,16 +2,16 @@ local M = {}
 
 local settings = {
     config_file = nil,
+    cwd = vim.fn.getcwd(),
 }
 
-function M.save_state()
+local function save_state(cwd)
     if (settings.config_file == nil) then
         return
     end
     local data_dir = vim.fn.stdpath('data')
     local config_dir = data_dir .. '/project_configs'
     vim.fn.mkdir(config_dir, "p")
-    local cwd = vim.fn.getcwd()
     local dir_name = vim.fn.fnamemodify(cwd, ':t')
     local save_file = config_dir .. '/' .. dir_name .. '.save'
     local file = io.open(save_file, "w")
@@ -23,11 +23,11 @@ function M.save_state()
     end
 end
 
-function M.load_state()
+local function load_state(cwd)
+    settings.cwd = cwd
     local data_dir = vim.fn.stdpath('data')
     local config_dir = data_dir .. '/project_configs'
     vim.fn.mkdir(config_dir, "p")
-    local cwd = vim.fn.getcwd()
     local dir_name = vim.fn.fnamemodify(cwd, ':t')
     local save_file = config_dir .. '/' .. dir_name .. '.save'
     if vim.loop.fs_stat(save_file) == nil then
@@ -36,7 +36,6 @@ function M.load_state()
     local file = io.open(save_file, "r")
     local content = file:read("*a")
     file:close()
-    print(content)
     settings.config_file = content
 end
 
@@ -85,7 +84,6 @@ function M.open_config()
         vim.print("No config file selected")
         return
     end
-    print(config_path)
     vim.cmd('tabedit ' .. vim.fn.fnameescape(config_path))
 end
 
@@ -154,6 +152,22 @@ function M.run_config()
             vim.api.nvim_buf_set_text(buf, last_line, end_col, last_line, end_col, { message })
         end,
     })
+end
+
+function M.setup(opts)
+    load_state(vim.fn.getcwd())
+    vim.api.nvim_create_autocmd("VimLeavePre", {
+        callback = function()
+            save_state(vim.fn.getcwd())
+        end,
+    })
+    vim.api.nvim_create_autocmd("DirChanged", {
+        callback = function(ev)
+            save_state(settings.cwd)
+            load_state(vim.fn.getcwd())
+        end,
+    })
+    load_state(vim.fn.getcwd())
 end
 
 return M

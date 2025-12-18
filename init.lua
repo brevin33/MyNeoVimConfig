@@ -31,24 +31,18 @@ vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 vim.keymap.set('n', 'O', 'o<Esc>')
 
 vim.keymap.set({ "n", "v", "x" }, "gq", ":copen<CR>");
+-- Mark initial tab and window
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+        vim.g.initial_tab = vim.api.nvim_get_current_tabpage()
+        vim.g.initial_win = vim.api.nvim_get_current_win()
+    end,
+})
 vim.keymap.set("n", "<Esc>", function()
-    local win_count = #vim.api.nvim_list_wins()
-    local tab_count = #vim.api.nvim_list_tabpages()
-    if win_count > 1 or tab_count > 1 then
-        local buf = vim.api.nvim_get_current_buf()
-        local buftype = vim.api.nvim_get_option_value("filetype", { buf = buf })
-        local has_copilot_chat = false
-        for _, win in ipairs(vim.api.nvim_list_wins()) do
-            local win_buf = vim.api.nvim_win_get_buf(win)
-            local win_ft = vim.api.nvim_get_option_value("filetype", { buf = win_buf })
-            if win_ft == "copilot-chat" then
-                has_copilot_chat = true
-                break
-            end
-        end
-        if not has_copilot_chat or buftype == "copilot-chat" then
-            vim.cmd("close")
-        end
+    local current_tab = vim.api.nvim_get_current_tabpage()
+    local current_win = vim.api.nvim_get_current_win()
+    if current_win ~= vim.g.initial_win or current_tab ~= vim.g.initial_tab then
+        vim.cmd("close")
     end
 end, { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>t", function()
@@ -137,12 +131,7 @@ require("oil").setup({
     keymaps = {
         ["g?"] = { "actions.show_help", mode = "n" },
         ["<CR>"] = "actions.select",
-        ["<C-s>"] = { "actions.select", opts = { vertical = true } },
-        ["<C-h>"] = { "actions.select", opts = { horizontal = true } },
-        ["<C-t>"] = { "actions.select", opts = { tab = true } },
-        ["<C-p>"] = "actions.preview",
-        ["<C-c>"] = { "actions.close", mode = "n" },
-        ["<C-l>"] = "actions.refresh",
+        ["<C-r>"] = "actions.refresh",
         ["-"] = { "actions.parent", mode = "n" },
         ["_"] = { "actions.open_cwd", mode = "n" },
         ["`"] = { "actions.cd", mode = "n" },
@@ -160,7 +149,6 @@ vim.api.nvim_create_autocmd("FileType", {
     callback = function()
         vim.keymap.set("n", "<leader>w", function()
             local oil_dir = require("oil").get_current_dir()
-            require("builder").save_state()
             if current_session ~= nil then
                 require("mini.sessions").write(current_session)
             end
@@ -169,7 +157,6 @@ vim.api.nvim_create_autocmd("FileType", {
             if current_session ~= nil then
                 require("mini.sessions").read(current_session)
             end
-            require("builder").load_state()
         end, { buffer = true, desc = "Set working directory to Oil dir" })
     end,
 })
@@ -198,13 +185,10 @@ require("mini.sessions").setup({
         post = {
             read = function()
                 set_current_session()
-                require("builder").load_state()
-                require("harpoon").data:sync()
             end
         },
         pre = {
             read = function()
-                require("builder").save_state()
             end
         },
     },
@@ -409,24 +393,11 @@ vim.keymap.set("n", "<leader>am", "<CMD>CopilotChatModels<CR>", { desc = "Toggle
 vim.keymap.set("n", "<leader>aa", "<CMD>CopilotChatAgents<CR>", { desc = "Toggle Copilot Chat" })
 
 
-local harpoon = require("harpoon")
--- Initialize harpoon
-harpoon:setup()
-
--- Set file mappings (leader + j/k/l/;)
-vim.keymap.set("n", "<leader>j", function() harpoon:list():replace_at(1) end, { desc = "Set harpoon file 1" })
-vim.keymap.set("n", "<leader>k", function() harpoon:list():replace_at(2) end, { desc = "Set harpoon file 2" })
-vim.keymap.set("n", "<leader>l", function() harpoon:list():replace_at(3) end, { desc = "Set harpoon file 3" })
-vim.keymap.set("n", "<leader>;", function() harpoon:list():replace_at(4) end, { desc = "Set harpoon file 4" })
-vim.keymap.set("n", "<A-j>", function() harpoon:list():select(1) end, { desc = "Goto harpoon file 1" })
-vim.keymap.set("n", "<A-k>", function() harpoon:list():select(2) end, { desc = "Goto harpoon file 2" })
-vim.keymap.set("n", "<A-l>", function() harpoon:list():select(3) end, { desc = "Goto harpoon file 3" })
-vim.keymap.set("n", "<A-;>", function() harpoon:list():select(4) end, { desc = "Goto harpoon file 4" })
-vim.keymap.set("n", "<leader>m", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 
 vim.g.undotree_WindowLayout = 3
 vim.keymap.set("n", "<leader>u", ":UndotreeToggle<CR>:UndotreeFocus<CR>", { noremap = true, silent = true })
 
+require("builder").setup({})
 vim.keymap.set({ "n", "v", "x" }, "<leader>bo", function() require("builder").open_config() end)
 vim.keymap.set({ "n", "v", "x" }, "<leader>bb", function() require("builder").run_config() end)
 vim.keymap.set({ "n", "v", "x" }, "<leader>ba", function()
@@ -449,13 +420,6 @@ vim.keymap.set({ "n", "v", "x" }, "<leader>bs", function()
     })
 end)
 
-vim.api.nvim_create_autocmd("VimLeavePre", {
-    callback = function()
-        require("builder").save_state()
-    end,
-})
-
-require("builder").load_state()
 
 
 local raddbg = require("raddbg")
@@ -673,3 +637,13 @@ require("Comment").setup({
     },
 })
 require("todo-comments").setup({})
+
+require("pin").setup({})
+vim.keymap.set("n", "<leader>j", function() require("pin").pin(1) end)
+vim.keymap.set("n", "<leader>k", function() require("pin").pin(2) end)
+vim.keymap.set("n", "<leader>l", function() require("pin").pin(3) end)
+vim.keymap.set("n", "<leader>;", function() require("pin").pin(4) end)
+vim.keymap.set("n", "<A-j>", function() require("pin").goto_pin(1) end)
+vim.keymap.set("n", "<A-k>", function() require("pin").goto_pin(2) end)
+vim.keymap.set("n", "<A-l>", function() require("pin").goto_pin(3) end)
+vim.keymap.set("n", "<A-;>", function() require("pin").goto_pin(4) end)
