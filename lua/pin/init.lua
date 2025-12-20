@@ -34,12 +34,10 @@ local function save_state(cwd)
     local state_folder = M.state_folder()
     local dir_name = vim.fn.fnamemodify(cwd, ':t')
     local state_file = state_folder .. '/' .. dir_name .. '.pin'
-    print("saving state to " .. state_file)
     local file = io.open(state_file, "w")
     if not file then
         return
     end
-    print("past state to " .. state_file)
     file:write(vim.fn.json_encode(pin_state.pinned_spots))
     file:close()
 end
@@ -50,7 +48,6 @@ local function load_state(cwd)
     local dir_name = vim.fn.fnamemodify(cwd, ':t')
     local state_file = state_folder .. '/' .. dir_name .. '.pin'
     if vim.fn.filereadable(state_file) ~= 1 then
-        print("no state file found at " .. state_file)
         pin_state.pinned_spots = {}
         return
     end
@@ -59,7 +56,6 @@ local function load_state(cwd)
     file:close()
     local state = vim.fn.json_decode(content)
     if state then
-        print("loaded state from " .. state_file)
         pin_state.pinned_spots = state
     else
         print("failed to load state from " .. state_file)

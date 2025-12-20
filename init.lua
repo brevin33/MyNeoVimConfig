@@ -200,7 +200,6 @@ vim.defer_fn(function()
     if vim.fn.argc() ~= 0 then
         set_current_session()
         if current_session ~= nil then
-            print("current session is " .. current_session)
             require("mini.sessions").read(current_session)
         end
     end
@@ -639,10 +638,10 @@ require("Comment").setup({
 require("todo-comments").setup({})
 
 require("pin").setup({})
-vim.keymap.set("n", "<leader>j", function() require("pin").pin(1) end)
-vim.keymap.set("n", "<leader>k", function() require("pin").pin(2) end)
-vim.keymap.set("n", "<leader>l", function() require("pin").pin(3) end)
-vim.keymap.set("n", "<leader>;", function() require("pin").pin(4) end)
+vim.keymap.set("n", "<A-J>", function() require("pin").pin(1) end)
+vim.keymap.set("n", "<A-K>", function() require("pin").pin(2) end)
+vim.keymap.set("n", "<A-L>", function() require("pin").pin(3) end)
+vim.keymap.set("n", "<A-:>", function() require("pin").pin(4) end)
 vim.keymap.set("n", "<A-j>", function() require("pin").goto_pin(1) end)
 vim.keymap.set("n", "<A-k>", function() require("pin").goto_pin(2) end)
 vim.keymap.set("n", "<A-l>", function() require("pin").goto_pin(3) end)
