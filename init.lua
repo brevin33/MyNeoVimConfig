@@ -73,7 +73,7 @@ vim.o.signcolumn = "no"
 vim.o.hls = true
 vim.o.laststatus = 0
 vim.opt.fillchars = { eob = " " }
-vim.opt.shell = "pwsh"
+vim.opt.shell = "powershell.exe"
 vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command /c"
 vim.opt.shellquote = ""
 vim.opt.shellxquote = ""
@@ -609,12 +609,6 @@ configs.setup({
     ensure_installed = {
         "c",
         "cpp",
-        "lua",
-        "vim",
-        "vimdoc",
-        "query",
-        "elixir",
-        "heex",
         "javascript",
         "html",
         "python",
