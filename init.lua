@@ -73,8 +73,8 @@ vim.o.signcolumn = "no"
 vim.o.hls = true
 vim.o.laststatus = 0
 vim.opt.fillchars = { eob = " " }
-vim.opt.shell = "powershell.exe"
-vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command /c"
+vim.opt.shell = "pwsh"
+vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
 vim.opt.shellquote = ""
 vim.opt.shellxquote = ""
 vim.opt.runtimepath:append(vim.fn.stdpath("config") .. "/syntax")
@@ -85,7 +85,7 @@ if vim.g.neovide then
     vim.o.guifont = "Roboto Mono:h19"
     vim.g.neovide_hide_mouse_when_typing = true
     vim.g.neovide_refresh_rate = 360
-    vim.g.neovide_fullscreen = false
+    vim.g.neovide_fullscreen = true
     vim.g.neovide_profiler = false
     vim.g.neovide_cursor_hack = true
     vim.g.neovide_cursor_animation_length = 0.0
@@ -476,7 +476,7 @@ vim.keymap.set("n", '"', function()
     raddbg.continue()
 end, { noremap = true, silent = true })
 
-vim.keymap.set("n", "'", function()
+vim.keymap.set("n", "<A-CR>", function()
     raddbg.kill()
 end, { noremap = true, silent = true })
 
