@@ -5,6 +5,10 @@ local pin_state = {
     cwd = vim.fn.getcwd(),
 }
 
+local function standardize_path(path)
+    return path:gsub("\\", "/")
+end
+
 function M.state_folder()
     local state_folder = vim.fn.stdpath('data') .. '/pin'
     vim.fn.mkdir(state_folder, 'p')
@@ -14,7 +18,7 @@ end
 local function get_file_state()
     local line = vim.api.nvim_win_get_cursor(0)[1]
     local col = vim.api.nvim_win_get_cursor(0)[2]
-    local filepath = vim.api.nvim_buf_get_name(0)
+    local filepath = standardize_path(vim.api.nvim_buf_get_name(0))
     return { line = line, col = col, filepath = filepath }
 end
 
@@ -22,7 +26,7 @@ local function load_file_state(state)
     local line = state.line
     local col = state.col
     local filepath = state.filepath
-    local filepath_cur = vim.api.nvim_buf_get_name(0)
+    local filepath_cur = standardize_path(vim.api.nvim_buf_get_name(0))
     if filepath == filepath_cur then
         return
     end
@@ -67,7 +71,7 @@ function M.setup(opts)
         callback = function(args)
             local previous_buf = vim.fn.bufnr('#')
             if previous_buf ~= -1 then
-                local previous_file = vim.api.nvim_buf_get_name(previous_buf)
+                local previous_file = standardize_path(vim.api.nvim_buf_get_name(previous_buf))
                 if previous_file ~= "" and vim.api.nvim_buf_is_valid(previous_buf) then
                     if vim.fn.filereadable(previous_file) == 1 then
                         local pos = vim.api.nvim_buf_get_mark(previous_buf, '"')

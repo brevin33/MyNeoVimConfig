@@ -29,6 +29,19 @@ vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to above window" })
 vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 
 vim.keymap.set('n', 'O', 'o<Esc>')
+vim.keymap.set('n', 'm', function()
+    local recording_register = vim.fn.reg_recording()
+    if recording_register ~= "" then
+        vim.cmd('normal! q')
+    else
+        vim.cmd('normal! qm')
+    end
+end, { desc = 'Toggle macro recording' })
+vim.keymap.set('n', 'M', '@m')
+
+vim.keymap.set('n', '<CR>', function()
+    vim.lsp.buf.code_action()
+end, { desc = 'LSP Code Actions' })
 
 vim.keymap.set({ "n", "v", "x" }, "gq", ":copen<CR>");
 -- Mark initial tab and window
@@ -53,7 +66,7 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>")
 
 vim.o.number = true
 vim.o.relativenumber = true
-vim.o.wrap = true
+vim.o.wrap = false
 vim.o.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.softtabstop = 4
@@ -81,11 +94,12 @@ vim.opt.runtimepath:append(vim.fn.stdpath("config") .. "/syntax")
 vim.opt.runtimepath:append(vim.fn.stdpath("config") .. "/bin")
 vim.o.splitright = true
 
+
 if vim.g.neovide then
     vim.o.guifont = "Roboto Mono:h19"
     vim.g.neovide_hide_mouse_when_typing = true
     vim.g.neovide_refresh_rate = 360
-    vim.g.neovide_fullscreen = true
+    vim.g.neovide_fullscreen = false
     vim.g.neovide_profiler = false
     vim.g.neovide_cursor_hack = true
     vim.g.neovide_cursor_animation_length = 0.0
@@ -157,6 +171,7 @@ vim.api.nvim_create_autocmd("FileType", {
             if current_session ~= nil then
                 require("mini.sessions").read(current_session)
             end
+            print("Changed directory to: " .. oil_dir)
         end, { buffer = true, desc = "Set working directory to Oil dir" })
     end,
 })
@@ -204,7 +219,13 @@ vim.defer_fn(function()
         end
     end
 end, 1)
-vim.keymap.set("n", "<leader>s", ":mksession " .. sessions_dir .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t") .. "<CR>")
+vim.keymap.set("n", "<leader>s", function()
+    current_session = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+    if current_session ~= nil then
+        require("mini.sessions").write(current_session)
+    end
+end)
+
 
 vim.keymap.set('n', 'gs', function()
     require("mini.pick").start({
@@ -234,6 +255,8 @@ require("mini.starter").setup({})
 require("mason").setup({})
 
 vim.lsp.enable({ "lua_ls", "clangd" })
+
+vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, { desc = 'LSP Rename' })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function(args)
@@ -516,7 +539,6 @@ local function select_rad_project()
         print("nil rad project file path")
         return
     end
-
     raddbg.select_project(rad_project_file_path)
 end
 
